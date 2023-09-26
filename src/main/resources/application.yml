@@ -1,0 +1,8 @@
+aws:
+  signingRegion: ${AWS_SIGNINGREGION}
+  accessKey: ${AWS_ACCESSKEY}
+  secretKey: ${AWS_SECRETKEY}
+
+spotify:
+  clientId: ${SPOTIFY_CLIENTID}
+  clientSecret: ${SPOTIFY_CLIENTSECRET}
