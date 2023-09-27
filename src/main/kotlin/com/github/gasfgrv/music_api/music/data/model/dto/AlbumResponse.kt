@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class AlbumResponse(
-    val albumName: String,
-    var releaseDate: String,
-    val coverUrl: String,
-    val href: String
+  val albumName: String,
+  var releaseDate: String,
+  val coverUrl: String,
+  val href: String
 )

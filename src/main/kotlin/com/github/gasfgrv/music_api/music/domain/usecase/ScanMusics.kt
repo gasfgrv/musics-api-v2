@@ -8,27 +8,27 @@ import org.springframework.stereotype.Service
 
 @Service
 class ScanMusics(private val musicRepository: MusicRepository) {
-    private val logger = LoggerFactory.getLogger(MusicRepository::class.java)
+  private val logger = LoggerFactory.getLogger(MusicRepository::class.java)
 
-    fun scan(attributes: Map<String, String>): List<Music> {
-        logger.info("Scanning musics by: $attributes")
-        return musicRepository.scan(attributes)
-    }
+  fun scan(attributes: Map<String, String>): List<Music> {
+    logger.info("Scanning musics by: $attributes")
+    return musicRepository.scan(attributes)
+  }
 
-    fun isAllAttributesValid(attributes: Map<String, String>): Boolean {
-        val allowedAtributes = listOf(
-            "MusicId",
-            "MusicName",
-            "MusicUri",
-            "MusicAlbum",
-            "MusicArtists",
-            "MusicNumber",
-            "MusicDuration",
-            "MusicIsExplicit",
-            "MusicPopularity"
-        ).map { Utils.toSnakeCase(it) }
+  fun isAllAttributesValid(attributes: Map<String, String>): Boolean {
+    val allowedAtributes = listOf(
+      "MusicId",
+      "MusicName",
+      "MusicUri",
+      "MusicAlbum",
+      "MusicArtists",
+      "MusicNumber",
+      "MusicDuration",
+      "MusicIsExplicit",
+      "MusicPopularity"
+    ).map { Utils.toSnakeCase(it) }
 
-        return attributes.keys.stream()
-            .allMatch { allowedAtributes.contains(it) }
-    }
+    return attributes.keys.stream()
+      .allMatch { allowedAtributes.contains(it) }
+  }
 }

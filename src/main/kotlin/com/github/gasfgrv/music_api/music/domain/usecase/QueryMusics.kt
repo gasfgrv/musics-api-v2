@@ -8,16 +8,16 @@ import org.springframework.stereotype.Service
 
 @Service
 class QueryMusics(private val musicRepository: MusicRepository) {
-    private val logger = LoggerFactory.getLogger(QueryMusics::class.java)
-    fun query(id: UUID, name: String?): List<Music> {
-        val musics = musicRepository.query(id.toString(), name)
+  private val logger = LoggerFactory.getLogger(QueryMusics::class.java)
+  fun query(id: UUID, name: String?): List<Music> {
+    val musics = musicRepository.query(id.toString(), name)
 
-        if (musics.isEmpty()) {
-            logger.warn("Filtering could not find any songs, returning an empty list")
-            return emptyList()
-        }
-
-        logger.info("Filter found ${musics.size} songs")
-        return musics
+    if (musics.isEmpty()) {
+      logger.warn("Filtering could not find any songs, returning an empty list")
+      return emptyList()
     }
+
+    logger.info("Filter found ${musics.size} songs")
+    return musics
+  }
 }

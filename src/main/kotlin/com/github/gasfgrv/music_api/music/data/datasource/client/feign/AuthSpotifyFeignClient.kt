@@ -7,17 +7,16 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
-
 @FeignClient(
-    name = "authSpotifyFeignClient",
-    url = "https://accounts.spotify.com",
-    configuration = [FormFeignEncoderConfig::class]
+  name = "authSpotifyFeignClient",
+  url = "\${spotify.authUrl}",
+  configuration = [FormFeignEncoderConfig::class]
 )
-interface AuthSpotifyFeignClient {
-    @PostMapping(
-        value = ["/api/token"],
-        consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    fun getAccessToken(@RequestBody request: Map<String, Any>): AccessTokenResponse
+fun interface AuthSpotifyFeignClient {
+  @PostMapping(
+    value = ["/api/token"],
+    consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE],
+    produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun getAccessToken(@RequestBody request: Map<String, Any>): AccessTokenResponse
 }

@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class GetTrackDetails(private val spotifyClient: SpotifyClient) {
-    private val logger = LoggerFactory.getLogger(GetTrackDetails::class.java)
+  private val logger = LoggerFactory.getLogger(GetTrackDetails::class.java)
 
-    fun getTrack(music: Music): Music {
-        logger.info("Consulting Spotify API to retrieve additional info about song")
-        return spotifyClient.getTrackInfo(music)
-    }
+  fun getTrack(music: Music): Music {
+    logger.info("Consulting Spotify API to retrieve additional info about song")
+    return spotifyClient.getTrackInfo(music)
+  }
 }

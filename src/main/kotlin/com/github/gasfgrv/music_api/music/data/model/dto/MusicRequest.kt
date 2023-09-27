@@ -6,6 +6,6 @@ import jakarta.validation.constraints.NotBlank
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class MusicRequest(
-    @NotBlank val name: String,
-    @NotBlank val artists: List<String>
+  @NotBlank val name: String,
+  @NotBlank val artists: List<String>
 )

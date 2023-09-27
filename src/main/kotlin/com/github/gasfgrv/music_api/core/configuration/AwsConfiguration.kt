@@ -14,43 +14,43 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
 @Configuration
 class AwsConfiguration {
-    private val logger = LoggerFactory.getLogger(AwsConfiguration::class.java)
+  private val logger = LoggerFactory.getLogger(AwsConfiguration::class.java)
 
-    @Value("\${aws.signingRegion}")
-    private lateinit var signingRegion: String
+  @Value("\${aws.signingRegion}")
+  private lateinit var signingRegion: String
 
-    @Value("\${aws.accessKey}")
-    private lateinit var accessKey: String
+  @Value("\${aws.accessKey}")
+  private lateinit var accessKey: String
 
-    @Value("\${aws.secretKey}")
-    private lateinit var secretKey: String
+  @Value("\${aws.secretKey}")
+  private lateinit var secretKey: String
 
-    @Bean
-    fun awsCredentials(): AwsCredentials {
-        logger.info("Getting AWS account credentials")
-        return AwsBasicCredentials.create(accessKey, secretKey)
-    }
+  @Bean
+  fun awsCredentials(): AwsCredentials {
+    logger.info("Getting AWS account credentials")
+    return AwsBasicCredentials.create(accessKey, secretKey)
+  }
 
-    @Bean
-    fun awsCredentialsProvider(awsCredentials: AwsCredentials): AwsCredentialsProvider {
-        logger.info("Getting the AWS Account Credential Provider")
-        return StaticCredentialsProvider.create(awsCredentials)
-    }
+  @Bean
+  fun awsCredentialsProvider(awsCredentials: AwsCredentials): AwsCredentialsProvider {
+    logger.info("Getting the AWS Account Credential Provider")
+    return StaticCredentialsProvider.create(awsCredentials)
+  }
 
-    @Bean
-    fun dynamoDbClient(awsCredentialsProvider: AwsCredentialsProvider): DynamoDbClient {
-        logger.info("Getting the DynamoDB Client")
-        return DynamoDbClient.builder()
-            .region(Region.of(signingRegion))
-            .credentialsProvider(awsCredentialsProvider)
-            .build()
-    }
+  @Bean
+  fun dynamoDbClient(awsCredentialsProvider: AwsCredentialsProvider): DynamoDbClient {
+    logger.info("Getting the DynamoDB Client")
+    return DynamoDbClient.builder()
+      .region(Region.of(signingRegion))
+      .credentialsProvider(awsCredentialsProvider)
+      .build()
+  }
 
-    @Bean
-    fun dynamoDbEnhancedClient(dynamoDbClient: DynamoDbClient): DynamoDbEnhancedClient {
-        logger.info("")
-        return DynamoDbEnhancedClient.builder()
-            .dynamoDbClient(dynamoDbClient)
-            .build()
-    }
+  @Bean
+  fun dynamoDbEnhancedClient(dynamoDbClient: DynamoDbClient): DynamoDbEnhancedClient {
+    logger.info("")
+    return DynamoDbEnhancedClient.builder()
+      .dynamoDbClient(dynamoDbClient)
+      .build()
+  }
 }

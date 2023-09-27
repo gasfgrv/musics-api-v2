@@ -4,6 +4,7 @@ import com.github.gasfgrv.music_api.core.utils.Utils
 import com.github.gasfgrv.music_api.music.data.datasource.mapper.MusicMapper
 import com.github.gasfgrv.music_api.music.domain.entity.Music
 import com.github.gasfgrv.music_api.music.domain.repository.MusicRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
@@ -18,102 +19,97 @@ import com.github.gasfgrv.music_api.music.data.model.entity.Music as MusicEntity
 
 @Repository
 class DynamoDbMusicRepository(
-    private val dynamoDbEnhancedClient: DynamoDbEnhancedClient,
-    private val musicMapper: MusicMapper
+  private val dynamoDbEnhancedClient: DynamoDbEnhancedClient,
+  private val musicMapper: MusicMapper
 ) : MusicRepository {
-    override fun save(music: Music) {
-        val musicEntity = musicMapper.toDataEntity(music)
-        getTable().putItem(musicEntity)
+  private val logger = LoggerFactory.getLogger(DynamoDbMusicRepository::class.java)
+  override fun save(music: Music) {
+    logger.info("Saving music in DynamoDB: [MusicId=${music.id.toString()}, MusicName=${music.name}]")
+    val musicEntity = musicMapper.toDataEntity(music)
+    getTable().putItem(musicEntity)
+  }
+
+  override fun load(id: String, name: String): Music? {
+    val request = GetItemEnhancedRequest.builder()
+      .key(setKey(id, name))
+      .build()
+
+    logger.info("Loading music in DynamoDB: [MusicId=${id}, MusicName=${name}]")
+    val music = getTable().getItem(request) ?: return null
+
+    return musicMapper.toDomainEntity(music)
+  }
+
+  override fun query(id: String, name: String?): List<Music> {
+    val queryConditional = QueryConditional.keyEqualTo(setKey(id, name))
+
+    logger.info("Querying musics in DynamoDB: [MusicId=${id}, MusicName=${name}]")
+    val items = getTable().query(queryConditional)
+      .items()
+      .stream()
+      .toList()
+
+    return items.map { musicMapper.toDomainEntity(it) }
+  }
+
+
+  override fun scan(attributes: Map<String, Any>): List<Music> {
+    logger.info("Gathering filter conditions");
+    val joinedConditions = setCondtions(attributes.keys)
+    val attributesValue = attributes.map {
+      ":${Utils.toSnakeCase(it.key)}" to setAttributeValue(it.key, it.value)
+    }.toMap()
+
+    logger.info("Mounting of filter expression: [$joinedConditions]")
+    val filterExpression = Expression.builder()
+      .expression(joinedConditions)
+      .expressionValues(attributesValue)
+      .build()
+    val scanRequest = ScanEnhancedRequest.builder()
+      .filterExpression(filterExpression)
+      .build()
+
+    logger.info("Scanning table in DynamoDB for search music")
+    val items = getTable().scan(scanRequest)
+      .items()
+      .stream()
+      .toList()
+
+    return items.map { musicMapper.toDomainEntity(it) }
+  }
+
+  private fun getTable(): DynamoDbTable<MusicEntity> {
+    val tableSchema = TableSchema.fromBean(MusicEntity::class.java)
+    return dynamoDbEnhancedClient.table("MusicsTb", tableSchema)
+  }
+
+  private fun setKey(id: String, name: String?): Key? {
+    return if (name == null) {
+      Key.builder()
+        .partitionValue(id)
+        .build()
+    } else {
+      Key.builder()
+        .partitionValue(id)
+        .sortValue(name)
+        .build()
     }
+  }
 
-    override fun load(id: String, name: String?): Music? {
-        val key = if (name == null) {
-            Key.builder()
-                .partitionValue(id)
-                .build()
-        } else {
-            Key.builder()
-                .partitionValue(id)
-                .sortValue(name)
-                .build()
-        }
-
-        val request = GetItemEnhancedRequest.builder()
-            .key(key)
-            .build()
-
-        val music = getTable().getItem(request) ?: return null
-
-        return musicMapper.toDomainEntity(music)
+  private fun setCondtions(keys: Set<String>): String {
+    return keys.joinToString(separator = " and ") {
+      when (it) {
+        "music_artists" -> "MusicArtists[0].ArtistName = :${Utils.toSnakeCase(it)}"
+        "music_album" -> "MusicAlbum.AlbumName = :${Utils.toSnakeCase(it)}"
+        else -> "${Utils.toPascalCase(it)} = :${Utils.toSnakeCase(it)}"
+      }
     }
+  }
 
-    override fun query(id: String, name: String?): List<Music> {
-        val key = if (name == null) {
-            Key.builder()
-                .partitionValue(id)
-                .build()
-        } else {
-            Key.builder()
-                .partitionValue(id)
-                .sortValue(name)
-                .build()
-        }
-
-        val queryConditional = QueryConditional.keyEqualTo(key)
-
-        val items = getTable().query(queryConditional)
-            .items()
-            .stream()
-            .toList()
-
-        return items.map { musicMapper.toDomainEntity(it) }
+  private fun setAttributeValue(key: String, value: Any): AttributeValue {
+    return when (key) {
+      "music_number", "music_popularity" -> AttributeValue.fromN(value as String)
+      else -> AttributeValue.fromS(value as String)
     }
-
-    override fun scan(attributes: Map<String, Any>): List<Music> {
-        val joinedConditions = setCondtions(attributes.keys)
-
-        val attributesValue = attributes.map {
-            ":${Utils.toSnakeCase(it.key)}" to setAttributeValue(it.key, it.value)
-        }.toMap()
-
-        val filterExpression = Expression.builder()
-            .expression(joinedConditions)
-            .expressionValues(attributesValue)
-            .build()
-
-        val scanRequest = ScanEnhancedRequest.builder()
-            .filterExpression(filterExpression)
-            .build()
-
-        val items = getTable().scan(scanRequest)
-            .items()
-            .stream()
-            .toList()
-
-        return items.map { musicMapper.toDomainEntity(it) }
-    }
-
-    private fun getTable(): DynamoDbTable<MusicEntity> {
-        val tableSchema = TableSchema.fromBean(MusicEntity::class.java)
-        return dynamoDbEnhancedClient.table("MusicsTb", tableSchema)
-    }
-
-    private fun setCondtions(keys: Set<String>): String {
-        return keys.joinToString(separator = " and ") {
-            when (it) {
-                "music_artists" -> "MusicArtists[0].ArtistName = :${Utils.toSnakeCase(it)}"
-                "music_album" -> "MusicAlbum.AlbumName = :${Utils.toSnakeCase(it)}"
-                else -> "${Utils.toPascalCase(it)} = :${Utils.toSnakeCase(it)}"
-            }
-        }
-    }
-
-    private fun setAttributeValue(key: String, value: Any): AttributeValue {
-        return when (key) {
-            "music_number", "music_popularity" -> AttributeValue.fromN(value as String)
-            else -> AttributeValue.fromS(value as String)
-        }
-    }
-
-
+  }
 }

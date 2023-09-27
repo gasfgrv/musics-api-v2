@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class LoadMusic(private val musicRepository: MusicRepository) {
-    fun load(id: UUID, name: String?): Music? {
-        return Optional.ofNullable(musicRepository.load(id.toString(), name))
-            .orElseThrow { MusicNotFoundException() }
-    }
+  fun load(id: UUID, name: String): Music? {
+    return Optional.ofNullable(musicRepository.load(id.toString(), name))
+      .orElseThrow { MusicNotFoundException() }
+  }
 }

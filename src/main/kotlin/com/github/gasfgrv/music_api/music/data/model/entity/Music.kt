@@ -9,13 +9,13 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @NoArg
 @DynamoDbBean
 data class Music(
-    @get:DynamoDbPartitionKey @get:DynamoDbAttribute("MusicId") var id: String,
-    @get:DynamoDbSortKey @get:DynamoDbAttribute("MusicName") var name: String,
-    @get:DynamoDbAttribute("MusicUri") var uri: String,
-    @get:DynamoDbAttribute("MusicAlbum") var album: Album,
-    @get:DynamoDbAttribute("MusicArtists") var artists: List<Artist>,
-    @get:DynamoDbAttribute("MusicNumber") var diskNumber: Int,
-    @get:DynamoDbAttribute("MusicDuration") var duration: String,
-    @get:DynamoDbAttribute("MusicIsExplicit") var explicit: String,
-    @get:DynamoDbAttribute("MusicPopularity") var popularity: Int,
+  @get:DynamoDbPartitionKey @get:DynamoDbAttribute("MusicId") var id: String,
+  @get:DynamoDbSortKey @get:DynamoDbAttribute("MusicName") var name: String,
+  @get:DynamoDbAttribute("MusicUri") var uri: String,
+  @get:DynamoDbAttribute("MusicAlbum") var album: Album,
+  @get:DynamoDbAttribute("MusicArtists") var artists: List<Artist>,
+  @get:DynamoDbAttribute("MusicNumber") var diskNumber: Int,
+  @get:DynamoDbAttribute("MusicDuration") var duration: String,
+  @get:DynamoDbAttribute("MusicIsExplicit") var explicit: String,
+  @get:DynamoDbAttribute("MusicPopularity") var popularity: Int,
 )

@@ -5,6 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class ArtistResponse(
-    val name: String,
-    val href: String
+  val name: String,
+  val href: String
 )

@@ -8,26 +8,25 @@ import org.springframework.stereotype.Service
 
 @Service
 class SaveMusic(
-    private val musicRepository: MusicRepository,
-    private val getTrackDetails: GetTrackDetails
+  private val musicRepository: MusicRepository,
+  private val getTrackDetails: GetTrackDetails
 ) {
-    private val logger = LoggerFactory.getLogger(SaveMusic::class.java)
+  private val logger = LoggerFactory.getLogger(SaveMusic::class.java)
 
-    fun save(music: Music): Music {
-        val musicToSave = getTrackDetails.getTrack(music)
+  fun save(music: Music): Music {
+    val musicToSave = getTrackDetails.getTrack(music)
+    val attributes = HashMap<String, String>()
+    attributes["music_name"] = musicToSave.name
 
-        val attributes = HashMap<String, String>()
-        attributes["music_name"] = musicToSave.name
-
-        logger.info("Checking if music already exists")
-        if (musicRepository.scan(attributes).isNotEmpty()) {
-            throw MusicAlreadySavedException()
-        }
-
-        logger.info("Setting music id")
-        musicToSave.generateId()
-        musicRepository.save(musicToSave)
-
-        return musicToSave
+    logger.info("Checking if music already exists")
+    if (musicRepository.scan(attributes).isNotEmpty()) {
+      throw MusicAlreadySavedException()
     }
+
+    logger.info("Setting music id")
+    musicToSave.generateId()
+    musicRepository.save(musicToSave)
+
+    return musicToSave
+  }
 }
