@@ -6,6 +6,7 @@ import com.github.gasfgrv.music_api.music.data.datasource.mapper.MusicMapper
 import com.github.gasfgrv.music_api.music.data.model.dto.MusicRequest
 import com.github.gasfgrv.music_api.music.data.model.dto.MusicResponse
 import com.github.gasfgrv.music_api.music.data.model.dto.MusicsResponse
+import com.github.gasfgrv.music_api.music.domain.usecase.LoadMusic
 import com.github.gasfgrv.music_api.music.domain.usecase.QueryMusics
 import com.github.gasfgrv.music_api.music.domain.usecase.SaveMusic
 import com.github.gasfgrv.music_api.music.domain.usecase.ScanMusics
@@ -35,7 +36,8 @@ class MusicController(
     private val musicMapper: MusicMapper,
     private val saveMusic: SaveMusic,
     private val scanMusics: ScanMusics,
-    private val queryMusics: QueryMusics
+    private val queryMusics: QueryMusics,
+    private val loadMusic: LoadMusic
 ) {
     private val logger = LoggerFactory.getLogger(MusicController::class.java)
 
@@ -51,7 +53,7 @@ class MusicController(
 
         logger.info("Mounting the 'Location' header in response")
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
-            .path("/find")
+            .path("/load")
             .pathSegment(savedMusic.id.toString())
             .queryParam("music_name", Utils.encodeURL(savedMusic.name))
             .build()
@@ -94,6 +96,23 @@ class MusicController(
 
         logger.info(MOUNTING_RESPONSE)
         val response = queryMusics.query(UUID.fromString(id), name).map { musicMapper.toResponseCollection(it) }
+
+        logger.info(GATHERING_RESPONSE)
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/load/{music_id}")
+    fun loadMusic(
+        @PathVariable("music_id") id: String,
+        @RequestParam("music_name", required = false) name: String?,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<MusicResponse> {
+        logger.info(Utils.logRequest(servletPath = httpRequest.servletPath, requestParams = httpRequest.queryString))
+
+        val music = loadMusic.load(UUID.fromString(id), name)
+
+        logger.info(MOUNTING_RESPONSE)
+        val response = musicMapper.toResponse(music!!)
 
         logger.info(GATHERING_RESPONSE)
         return ResponseEntity.ok(response)

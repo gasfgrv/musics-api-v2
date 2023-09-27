@@ -10,6 +10,7 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 import software.amazon.awssdk.enhanced.dynamodb.Expression
 import software.amazon.awssdk.enhanced.dynamodb.Key
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema
+import software.amazon.awssdk.enhanced.dynamodb.model.GetItemEnhancedRequest
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional
 import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
@@ -25,8 +26,25 @@ class DynamoDbMusicRepository(
         getTable().putItem(musicEntity)
     }
 
-    override fun load(id: String, name: String?): Music {
-        TODO("Not yet implemented")
+    override fun load(id: String, name: String?): Music? {
+        val key = if (name == null) {
+            Key.builder()
+                .partitionValue(id)
+                .build()
+        } else {
+            Key.builder()
+                .partitionValue(id)
+                .sortValue(name)
+                .build()
+        }
+
+        val request = GetItemEnhancedRequest.builder()
+            .key(key)
+            .build()
+
+        val music = getTable().getItem(request) ?: return null
+
+        return musicMapper.toDomainEntity(music)
     }
 
     override fun query(id: String, name: String?): List<Music> {
