@@ -23,10 +23,8 @@ class Utils {
             method: String = "GET",
             servletPath: String,
             requestParams: String? = null,
-            pathVariable: String? = null
         ): String {
             val url = StringBuilder(servletPath)
-            pathVariable?.let { url.append("/$it") }
             requestParams?.let { url.append("?$it") }
             return "Received request: [$method] $url"
         }
