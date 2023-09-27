@@ -18,5 +18,17 @@ class Utils {
             val parts = string.split("_".toRegex())
             return parts.joinToString(separator = "") { it.substring(0, 1).uppercase() + it.substring(1) }
         }
+
+        fun logRequest(
+            method: String = "GET",
+            servletPath: String,
+            requestParams: String? = null,
+            pathVariable: String? = null
+        ): String {
+            val url = StringBuilder(servletPath)
+            pathVariable?.let { url.append("/$it") }
+            requestParams?.let { url.append("?$it") }
+            return "Received request: [$method] $url"
+        }
     }
 }

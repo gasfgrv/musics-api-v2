@@ -37,7 +37,10 @@ class MusicController(
         @RequestBody @Valid request: MusicRequest,
         httpRequest: HttpServletRequest
     ): ResponseEntity<MusicResponse> {
-        logger.info("Received request: [${httpRequest.method}] ${httpRequest.servletPath}")
+        logger.info(Utils.logRequest(
+            method = httpRequest.method,
+            servletPath = httpRequest.servletPath
+        ))
         val domainEntity = musicMapper.toDomainEntity(request)
         val savedMusic = saveMusic.save(domainEntity)
 
@@ -61,7 +64,10 @@ class MusicController(
         @RequestParam attributes: Map<String, String>,
         httpRequest: HttpServletRequest
     ): ResponseEntity<List<MusicsResponse>> {
-        logger.info("Received request: [${httpRequest.method}] ${httpRequest.servletPath}?${httpRequest.queryString}")
+        logger.info(Utils.logRequest(
+            servletPath = httpRequest.servletPath,
+            requestParams = httpRequest.queryString
+        ))
 
         logger.info("Checking if attributes is valid")
         if (scanMusics.isAllAttributesValid(attributes).not()) {
