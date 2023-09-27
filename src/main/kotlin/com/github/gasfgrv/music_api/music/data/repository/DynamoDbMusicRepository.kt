@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 import software.amazon.awssdk.enhanced.dynamodb.Expression
+import software.amazon.awssdk.enhanced.dynamodb.Key
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional
 import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import com.github.gasfgrv.music_api.music.data.model.entity.Music as MusicEntity
@@ -28,7 +30,25 @@ class DynamoDbMusicRepository(
     }
 
     override fun query(id: String, name: String?): List<Music> {
-        TODO("Not yet implemented")
+        val key = if (name == null) {
+            Key.builder()
+                .partitionValue(id)
+                .build()
+        } else {
+            Key.builder()
+                .partitionValue(id)
+                .sortValue(name)
+                .build()
+        }
+
+        val queryConditional = QueryConditional.keyEqualTo(key)
+
+        val items = getTable().query(queryConditional)
+            .items()
+            .stream()
+            .toList()
+
+        return items.map { musicMapper.toDomainEntity(it) }
     }
 
     override fun scan(attributes: Map<String, Any>): List<Music> {
@@ -52,7 +72,7 @@ class DynamoDbMusicRepository(
             .stream()
             .toList()
 
-        return items.map { music -> musicMapper.toDomainEntity(music) }
+        return items.map { musicMapper.toDomainEntity(it) }
     }
 
     private fun getTable(): DynamoDbTable<MusicEntity> {
