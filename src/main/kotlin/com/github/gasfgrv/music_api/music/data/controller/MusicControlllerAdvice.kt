@@ -28,17 +28,9 @@ class MusicControlllerAdvice {
     request: WebRequest
   ): ResponseEntity<ErrorResponse> {
     val status = HttpStatus.BAD_REQUEST
-    val headers = HttpHeaders()
-    headers[HttpHeaders.CONTENT_TYPE] = mutableListOf(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-    val response = ErrorResponse(
-      title = status.reasonPhrase,
-      detail = exception.body.detail!!,
-      instance = URI.create((request as ServletWebRequest).request.requestURI.toString()),
-      status = status.value(),
-      timestamp = OffsetDateTime.now()
-    )
-
-    return ResponseEntity.status(status).headers(headers).body(response)
+    val headers = headers()
+    val response = mountErrorResponse(status, exception.body.detail!!, request)
+    return handleException(status, headers, response)
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -48,17 +40,10 @@ class MusicControlllerAdvice {
     request: WebRequest
   ): ResponseEntity<ErrorResponse> {
     val status = HttpStatus.BAD_REQUEST
-    val headers = HttpHeaders()
-    headers[HttpHeaders.CONTENT_TYPE] = mutableListOf(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-    val response = ErrorResponse(
-      title = status.reasonPhrase,
-      detail = "Null value passed to a parameter that is not null-safety.",
-      instance = URI.create((request as ServletWebRequest).request.requestURI.toString()),
-      status = status.value(),
-      timestamp = OffsetDateTime.now()
-    )
-
-    return ResponseEntity.status(status).headers(headers).body(response)
+    val headers = headers()
+    val detail = "Null value passed to a parameter that is not null-safety."
+    val response = mountErrorResponse(status, detail, request)
+    return handleException(status, headers, response)
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -68,17 +53,9 @@ class MusicControlllerAdvice {
     request: WebRequest
   ): ResponseEntity<ErrorResponse> {
     val status = HttpStatus.BAD_REQUEST
-    val headers = HttpHeaders()
-    headers[HttpHeaders.CONTENT_TYPE] = mutableListOf(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-    val response = ErrorResponse(
-      title = status.reasonPhrase,
-      detail = exception.body.detail!!,
-      instance = URI.create((request as ServletWebRequest).request.requestURI.toString()),
-      status = status.value(),
-      timestamp = OffsetDateTime.now()
-    )
-
-    return ResponseEntity.status(status).headers(headers).body(response)
+    val headers = headers()
+    val response = mountErrorResponse(status, exception.body.detail!!, request)
+    return handleException(status, headers, response)
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -88,17 +65,9 @@ class MusicControlllerAdvice {
     request: WebRequest
   ): ResponseEntity<ErrorResponse> {
     val status = HttpStatus.BAD_REQUEST
-    val headers = HttpHeaders()
-    headers[HttpHeaders.CONTENT_TYPE] = mutableListOf(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-    val response = ErrorResponse(
-      title = status.reasonPhrase,
-      detail = exception.localizedMessage,
-      instance = URI.create((request as ServletWebRequest).request.requestURI.toString()),
-      status = status.value(),
-      timestamp = OffsetDateTime.now()
-    )
-
-    return ResponseEntity.status(status).headers(headers).body(response)
+    val headers = headers()
+    val response = mountErrorResponse(status, exception.localizedMessage, request)
+    return handleException(status, headers, response)
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -108,17 +77,9 @@ class MusicControlllerAdvice {
     request: WebRequest
   ): ResponseEntity<ErrorResponse> {
     val status = HttpStatus.BAD_REQUEST
-    val headers = HttpHeaders()
-    headers[HttpHeaders.CONTENT_TYPE] = mutableListOf(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-    val response = ErrorResponse(
-      title = status.reasonPhrase,
-      detail = exception.localizedMessage,
-      instance = URI.create((request as ServletWebRequest).request.requestURI.toString()),
-      status = status.value(),
-      timestamp = OffsetDateTime.now()
-    )
-
-    return ResponseEntity.status(status).headers(headers).body(response)
+    val headers = headers()
+    val response = mountErrorResponse(status, exception.localizedMessage, request)
+    return handleException(status, headers, response)
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -128,17 +89,9 @@ class MusicControlllerAdvice {
     request: WebRequest
   ): ResponseEntity<ErrorResponse> {
     val status = HttpStatus.BAD_REQUEST
-    val headers = HttpHeaders()
-    headers[HttpHeaders.CONTENT_TYPE] = mutableListOf(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-    val response = ErrorResponse(
-      title = status.reasonPhrase,
-      detail = exception.localizedMessage,
-      instance = URI.create((request as ServletWebRequest).request.requestURI.toString()),
-      status = status.value(),
-      timestamp = OffsetDateTime.now()
-    )
-
-    return ResponseEntity.status(status).headers(headers).body(response)
+    val headers = headers()
+    val response = mountErrorResponse(status, exception.localizedMessage, request)
+    return handleException(status, headers, response)
   }
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -148,17 +101,9 @@ class MusicControlllerAdvice {
     request: WebRequest
   ): ResponseEntity<ErrorResponse> {
     val status = HttpStatus.NOT_FOUND
-    val headers = HttpHeaders()
-    headers[HttpHeaders.CONTENT_TYPE] = mutableListOf(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-    val response = ErrorResponse(
-      title = status.reasonPhrase,
-      detail = exception.localizedMessage,
-      instance = URI.create((request as ServletWebRequest).request.requestURI.toString()),
-      status = status.value(),
-      timestamp = OffsetDateTime.now()
-    )
-
-    return ResponseEntity.status(status).headers(headers).body(response)
+    val headers = headers()
+    val response = mountErrorResponse(status, exception.localizedMessage, request)
+    return handleException(status, headers, response)
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -168,16 +113,36 @@ class MusicControlllerAdvice {
     request: WebRequest
   ): ResponseEntity<ErrorResponse> {
     val status = HttpStatus.INTERNAL_SERVER_ERROR
+    val headers = headers()
+    val response = mountErrorResponse(status, exception.localizedMessage, request)
+    return handleException(status, headers, response)
+  }
+
+  private fun headers(): HttpHeaders {
     val headers = HttpHeaders()
     headers[HttpHeaders.CONTENT_TYPE] = mutableListOf(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-    val response = ErrorResponse(
+    return headers
+  }
+
+  private fun mountErrorResponse(
+    status: HttpStatus,
+    message: String,
+    request: WebRequest
+  ): ErrorResponse {
+    return ErrorResponse(
       title = status.reasonPhrase,
-      detail = exception.localizedMessage,
+      detail = message,
       instance = URI.create((request as ServletWebRequest).request.requestURI.toString()),
       status = status.value(),
       timestamp = OffsetDateTime.now()
     )
+  }
 
+  private fun handleException(
+    status: HttpStatus,
+    headers: HttpHeaders,
+    response: ErrorResponse
+  ): ResponseEntity<ErrorResponse> {
     return ResponseEntity.status(status).headers(headers).body(response)
   }
 }
