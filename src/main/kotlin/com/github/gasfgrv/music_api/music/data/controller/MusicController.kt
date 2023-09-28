@@ -78,7 +78,7 @@ class MusicController(
     logger.info(Utils.logRequest(servletPath = httpRequest.servletPath, requestParams = httpRequest.queryString))
 
     logger.info("Checking if attributes is valid")
-    if (scanMusics.isAllAttributesValid(attributes).not()) {
+    if (scanMusics.hasAnyInvalidAttribute(attributes)) {
       logger.error("This request has one or more invalid attributes")
       throw InvalidParametersException()
     }

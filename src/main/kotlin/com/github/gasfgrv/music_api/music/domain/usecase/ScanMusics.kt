@@ -1,6 +1,5 @@
 package com.github.gasfgrv.music_api.music.domain.usecase
 
-import com.github.gasfgrv.music_api.core.utils.Utils
 import com.github.gasfgrv.music_api.music.domain.entity.Music
 import com.github.gasfgrv.music_api.music.domain.repository.MusicRepository
 import org.slf4j.LoggerFactory
@@ -15,20 +14,22 @@ class ScanMusics(private val musicRepository: MusicRepository) {
     return musicRepository.scan(attributes)
   }
 
-  fun isAllAttributesValid(attributes: Map<String, String>): Boolean {
+  fun hasAnyInvalidAttribute(attributes: Map<String, String>): Boolean {
+    if (attributes.entries.isEmpty()) {
+      return true
+    }
     val allowedAtributes = listOf(
-      "MusicId",
-      "MusicName",
-      "MusicUri",
-      "MusicAlbum",
-      "MusicArtists",
-      "MusicNumber",
-      "MusicDuration",
-      "MusicIsExplicit",
-      "MusicPopularity"
-    ).map { Utils.toSnakeCase(it) }
+      "music_id",
+      "music_name",
+      "music_uri",
+      "music_album",
+      "music_artists",
+      "music_number",
+      "music_duration",
+      "music_is_explicit",
+      "music_popularity"
+    )
 
-    return attributes.keys.stream()
-      .allMatch { allowedAtributes.contains(it) }
+    return attributes.keys.stream().anyMatch { !allowedAtributes.contains(it) }
   }
 }
