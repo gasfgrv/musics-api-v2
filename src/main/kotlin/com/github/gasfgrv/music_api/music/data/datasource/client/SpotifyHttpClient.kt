@@ -6,12 +6,12 @@ import com.github.gasfgrv.music_api.music.data.datasource.client.feign.SpotifyFe
 import com.github.gasfgrv.music_api.music.data.datasource.mapper.MusicMapper
 import com.github.gasfgrv.music_api.music.data.model.dto.AccessTokenResponse
 import com.github.gasfgrv.music_api.music.data.model.dto.SpotifyResponse
+import com.github.gasfgrv.music_api.music.data.secrets.AwsSecretsManagerClient
 import com.github.gasfgrv.music_api.music.domain.client.SpotifyClient
 import com.github.gasfgrv.music_api.music.domain.entity.Music
 import com.jayway.jsonpath.JsonPath
 import java.time.LocalDate
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 
@@ -19,16 +19,10 @@ import org.springframework.stereotype.Component
 class SpotifyHttpClient(
   private val authSpotifyFeignClient: AuthSpotifyFeignClient,
   private val spotifyFeignClient: SpotifyFeignClient,
-  private val musicMapper: MusicMapper
+  private val musicMapper: MusicMapper,
+  private val awsSecretsManagerClient: AwsSecretsManagerClient
 ) : SpotifyClient {
   private val logger = LoggerFactory.getLogger(SpotifyHttpClient::class.java)
-
-  @Value("\${spotify.clientId}")
-  private lateinit var clientId: String
-
-  @Value("\${spotify.clientSecret}")
-  private lateinit var clientSecret: String
-
   override fun getTrackInfo(music: Music): Music {
     val accessToken = getAccessTokenSpotify()
     val artistsName = Utils.joinToString(music.artists.map { it.name })
@@ -45,12 +39,13 @@ class SpotifyHttpClient(
     return musicMapper.toDomainEntity(spotifyResponse)
   }
 
-
   private fun getAccessTokenSpotify(): AccessTokenResponse {
+    val clientId = awsSecretsManagerClient.getSecret("spotify_client_id")
+    val clientSecret = awsSecretsManagerClient.getSecret("spotify_client_secret")
     val request = HashMap<String, String>()
     request["grant_type"] = "client_credentials"
-    request["client_id"] = clientId
-    request["client_secret"] = clientSecret
+    request["client_id"] = clientId!!
+    request["client_secret"] = clientSecret!!
 
     logger.info("Getting Spotify API access token")
     return authSpotifyFeignClient.getAccessToken(request)

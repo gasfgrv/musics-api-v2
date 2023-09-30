@@ -50,7 +50,6 @@ class MusicController(
     @Valid @RequestBody request: MusicRequest,
     httpRequest: HttpServletRequest
   ): ResponseEntity<MusicResponse> {
-    println(request)
     logger.info(Utils.logRequest(method = httpRequest.method, servletPath = httpRequest.servletPath))
     val domainEntity = musicMapper.toDomainEntity(request)
     val savedMusic = saveMusic.save(domainEntity)
