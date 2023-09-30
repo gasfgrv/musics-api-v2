@@ -1,0 +1,185 @@
+_type: export
+__export_format: 4
+__export_date: 2023-09-30T19:51:26.855Z
+__export_source: insomnia.desktop.app:v2023.2.2
+resources:
+  - _id: req_fab38265d4e743568944ac1998b3cc79
+    parentId: wrk_83d3047ff40741028de91073eb20ce3b
+    modified: 1696099249235
+    created: 1694832548309
+    url: http://localhost:8080/musics/v2/save
+    name: New Music
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "Linha do Equador",
+        	"artists": [
+        		"Djavan"
+        	]
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1694832548309
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_83d3047ff40741028de91073eb20ce3b
+    parentId: null
+    modified: 1694832545211
+    created: 1694832545211
+    name: v2
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_cde09237dcf741078bdf83035f487ff5
+    parentId: wrk_83d3047ff40741028de91073eb20ce3b
+    modified: 1696100778079
+    created: 1695245986067
+    url: http://localhost:8080/musics/v2/scan
+    name: Scan Music
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - name: music_id
+        value: e3b56bda-503b-4204-ba1c-34a5f1086d59
+      - name: music_name
+        value: Linha do Equador
+      - name: music_uri
+        value: https://open.spotify.com/track/51K301CKuavVEP7A9vsUaz
+      - name: music_album
+        value: Coisa de Acender
+      - name: music_artists
+        value: Djavan
+      - name: music_number
+        value: "4"
+      - name: music_duration
+        value: 04:33
+      - name: music_is_explicit
+        value: No
+      - name: music_popularity
+        value: "55"
+    headers: []
+    authentication: {}
+    metaSortKey: -1694832548259
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_16edc05535564b11ac02d24d17b9f76f
+    parentId: wrk_83d3047ff40741028de91073eb20ce3b
+    modified: 1696101003481
+    created: 1695767040889
+    url: http://localhost:8080/musics/v2/query
+    name: Query Music
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - name: music_id
+        value: e3b56bda-503b-4204-ba1c-34a5f1086d59
+      - name: music_name
+        value: Linha do Equador
+    headers: []
+    authentication: {}
+    metaSortKey: -1694832548209
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_a0a6bf851cb04e5097657da92b2c6615
+    parentId: wrk_83d3047ff40741028de91073eb20ce3b
+    modified: 1696101355641
+    created: 1695822149100
+    url: http://localhost:8080/musics/v2/load/e3b56bda-503b-4204-ba1c-34a5f1086d59
+    name: Load Music
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_fa8de7463978431ab388f11e33ca7a7c
+        name: music_name
+        value: Linha do Equador
+        description: ""
+    headers: []
+    authentication: {}
+    metaSortKey: -1693920107425.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_b5085733efd15c8f079766fb776343f24f9d0320
+    parentId: wrk_83d3047ff40741028de91073eb20ce3b
+    modified: 1694832545215
+    created: 1694832545215
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1694832545215
+    _type: environment
+  - _id: jar_b5085733efd15c8f079766fb776343f24f9d0320
+    parentId: wrk_83d3047ff40741028de91073eb20ce3b
+    modified: 1694885714114
+    created: 1694832545217
+    name: Default Jar
+    cookies:
+      - key: __Host-device_id
+        value: AQDZlJjzZEDfYZ34ROBZGHZEdvQfT6qA8ON_S_0qXUG1L9xFNJEt7UrgS1YLhhS6Y59VKtVKLRdGtf-xWZ_VoawAELMX03t2lSo
+        maxAge: 2147483647
+        domain: accounts.spotify.com
+        path: /
+        secure: true
+        httpOnly: true
+        extensions:
+          - Version=1
+          - SameSite=Lax
+        hostOnly: true
+        creation: 2023-09-16T17:35:14.110Z
+        lastAccessed: 2023-09-16T17:35:14.110Z
+        id: "5684976307660579"
+      - key: sp_tr
+        value: "false"
+        domain: accounts.spotify.com
+        path: /
+        secure: true
+        extensions:
+          - Version=1
+          - SameSite=Lax
+        hostOnly: false
+        creation: 2023-09-16T17:35:14.112Z
+        lastAccessed: 2023-09-16T17:35:14.112Z
+        id: "05772433569654489"
+    _type: cookie_jar
+  - _id: spc_5632ceac2fce49bb8b958e79bfcef87d
+    parentId: wrk_83d3047ff40741028de91073eb20ce3b
+    modified: 1694832545212
+    created: 1694832545212
+    fileName: v2
+    contents: ""
+    contentType: yaml
+    _type: api_spec
