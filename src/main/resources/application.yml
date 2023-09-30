@@ -1,13 +1,15 @@
 server:
   port: ${SERVER_PORT:8080}
 
+spring:
+  profiles:
+    active: ${ACTIVE_PROFILE:ec2}
+
 aws:
   signingRegion: ${AWS_SIGNINGREGION}
   accessKey: ${AWS_ACCESSKEY}
   secretKey: ${AWS_SECRETKEY}
 
 spotify:
-  clientId: ${SPOTIFY_CLIENTID}
-  clientSecret: ${SPOTIFY_CLIENTSECRET}
   authUrl: https://accounts.spotify.com
   apiUrl: https://api.spotify.com/v1

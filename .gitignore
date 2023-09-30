@@ -36,3 +36,4 @@ build/
 **/.terraform/
 **/*.hcl
 **/*tfstate*
+**/*.tfvars
