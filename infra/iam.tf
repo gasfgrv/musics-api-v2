@@ -52,6 +52,6 @@ resource "aws_iam_role_policy_attachment" "secretsmanager_role_policy_attachment
 }
 
 resource "aws_iam_instance_profile" "music_profile" {
-  name = "test_profile"
+  name = "api_profile"
   role = aws_iam_role.music_role.name
 }
