@@ -72,7 +72,6 @@
             <version>${json-path.version}</version>
         </dependency>
 
-
         <!--Swagger-->
         <dependency>
             <groupId>org.springdoc</groupId>
