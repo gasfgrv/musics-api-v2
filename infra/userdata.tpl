@@ -1,8 +1,11 @@
-##!/bin/bash
-sudo yum install docker
+#!/bin/bash
+sudo yum update -y
+sudo yum install docker -y
+sudo systemctl enable docker.service
+sudo service docker start
 
-docker pull gustosilva/music-api-v2:latest
+sudo docker pull gustosilva/music-api-v2:latest
 
-docker run -d \
+sudo docker run -d \
   --env AWS_SIGNINGREGION=us-east-1 \
   -p 80:8080 gustosilva/music-api-v2:latest
