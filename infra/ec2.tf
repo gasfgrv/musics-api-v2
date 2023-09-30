@@ -43,6 +43,7 @@ resource "aws_instance" "musics_instance_ec2" {
   subnet_id              = aws_subnet.musics_subnet.id
   ami                    = data.aws_ami.musics_ami.id
   user_data              = file("./userdata.tpl")
+  iam_instance_profile   = aws_iam_instance_profile.music_profile.name
 
   root_block_device {
     volume_size = 8

@@ -1,9 +1,9 @@
 data "aws_ami" "musics_ami" {
   most_recent = true
-  owners      = ["099720109477"]
+  owners      = ["137112412989"]
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230516"]
+    values = ["al2023-ami-2023.2.20230920.1-kernel-6.1-x86_64"]
   }
 }
