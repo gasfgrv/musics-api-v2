@@ -331,8 +331,10 @@ Connection: close
 Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente.
 
 - `SERVER_PORT`: (Opcional) Porta em que a aplicação irá rodar, por padrão está como **8080**.
-- `ACTIVE_PROFILE`: (Opcional) Ambiente em que aplicação está rodando,  por padrão está como **ec2**, mas aceita também o valor **local**.
+- `ACTIVE_PROFILE`: (Opcional) Ambiente em que aplicação está rodando,  por padrão está como **local**, mas aceita também o valor **ec2**.
 - `AWS_SIGNINGREGION`:  (Obrigatório) Região da AWS em que a aplicação estará.
+- `AWS_ENDPOINT_DYNAMO`: (Obrigatório) Endpoint do DynamoDB, [veja aqui a lista de endpoints](https://docs.aws.amazon.com/general/latest/gr/ddb.html).
+- `AWS_ENDPOINT_SECRETS_MANAGER`: (Obrigatório) Endpoint do Secrets Manager. [Veja aqui a lista de endpoints.](https://docs.aws.amazon.com/general/latest/gr/asm.html)
 - `AWS_ACCESSKEY`: (Opcional) Access Key do usuário AWS, só é necessário adionar caso esteja rodando local.
 - `AWS_SECRETKEY`: (Opcional) Secret Key do usuário AWS, só é necessário adionar caso esteja rodando local.
 
