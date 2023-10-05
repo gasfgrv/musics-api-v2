@@ -1,5 +1,6 @@
 package com.github.gasfgrv.music_api.core.configuration
 
+import java.net.URI
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -27,12 +28,18 @@ class AwsConfiguration {
   @Value("\${aws.secretKey}")
   private lateinit var secretKey: String
 
+  @Value("\${aws.serviceEndpoint.dynamo}")
+  private lateinit var endpointDynamo: String
+
+  @Value("\${aws.serviceEndpoint.secretsManager}")
+  private lateinit var endpointSecretsManager: String
+
   @Bean
   @Profile("local")
   fun devAwsCredentialsProvider(): AwsCredentialsProvider {
     logger.info("Getting the AWS Account Credential Provider")
     val credentials = AwsBasicCredentials.create(accessKey, secretKey)
-    return StaticCredentialsProvider.create(credentials);
+    return StaticCredentialsProvider.create(credentials)
   }
 
   @Bean
@@ -49,6 +56,7 @@ class AwsConfiguration {
     logger.info("Getting the DynamoDB Client")
     return DynamoDbClient.builder()
       .region(Region.of(signingRegion))
+      .endpointOverride(URI.create(endpointDynamo))
       .credentialsProvider(awsCredentialsProvider)
       .build()
   }
@@ -66,6 +74,7 @@ class AwsConfiguration {
     logger.info("Getting the Secrets Manager Client")
     return SecretsManagerClient.builder()
       .region(Region.of(signingRegion))
+      .endpointOverride(URI.create(endpointSecretsManager))
       .credentialsProvider(awsCredentialsProvider)
       .build()
   }
