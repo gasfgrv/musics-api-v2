@@ -5,7 +5,6 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse
 
-
 @Component
 class AwsSecretsManagerClient(private val secretsManagerClient: SecretsManagerClient) {
   fun getSecret(secretName: String): String? {

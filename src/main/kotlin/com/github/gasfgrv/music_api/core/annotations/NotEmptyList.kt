@@ -24,5 +24,3 @@ annotation class NotEmptyList(
     }
   }
 }
-
-
