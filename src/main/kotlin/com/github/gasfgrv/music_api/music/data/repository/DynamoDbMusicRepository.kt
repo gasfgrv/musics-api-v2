@@ -44,18 +44,16 @@ class DynamoDbMusicRepository(
     val queryConditional = QueryConditional.keyEqualTo(setKey(id, name))
 
     logger.info("Querying musics in DynamoDB: [MusicId=${id}, MusicName=${name}]")
-    val items = getTable().query(queryConditional)
+    return getTable().query(queryConditional)
       .items()
       .stream()
       .toList()
-
-    return items.map { musicMapper.toDomainEntity(it) }
+      .map { musicMapper.toDomainEntity(it) }
   }
-
 
   override fun scan(attributes: Map<String, Any>): List<Music> {
     logger.info("Gathering filter conditions");
-    val joinedConditions = setCondtions(attributes.keys)
+    val joinedConditions = setConditions(attributes.keys)
     val attributesValue = attributes.map {
       ":${Utils.toSnakeCase(it.key)}" to setAttributeValue(it.key, it.value)
     }.toMap()
@@ -70,12 +68,11 @@ class DynamoDbMusicRepository(
       .build()
 
     logger.info("Scanning table in DynamoDB for search music")
-    val items = getTable().scan(scanRequest)
+    return getTable().scan(scanRequest)
       .items()
       .stream()
       .toList()
-
-    return items.map { musicMapper.toDomainEntity(it) }
+      .map { musicMapper.toDomainEntity(it) }
   }
 
   private fun getTable(): DynamoDbTable<MusicEntity> {
@@ -83,20 +80,14 @@ class DynamoDbMusicRepository(
     return dynamoDbEnhancedClient.table("MusicsTb", tableSchema)
   }
 
-  private fun setKey(id: String, name: String?): Key? {
-    return if (name == null) {
-      Key.builder()
-        .partitionValue(id)
-        .build()
-    } else {
-      Key.builder()
-        .partitionValue(id)
-        .sortValue(name)
-        .build()
+  private fun setKey(id: String, name: String?): Key {
+    return when (name) {
+      null -> Key.builder().partitionValue(id).build()
+      else -> Key.builder().partitionValue(id).sortValue(name).build()
     }
   }
 
-  private fun setCondtions(keys: Set<String>): String {
+  private fun setConditions(keys: Set<String>): String {
     return keys.joinToString(separator = " and ") {
       when (it) {
         "music_artists" -> "MusicArtists[0].ArtistName = :${Utils.toSnakeCase(it)}"
