@@ -9,13 +9,15 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.system.CapturedOutput
 import org.springframework.boot.test.system.OutputCaptureExtension
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient
 
 
 @ExtendWith(OutputCaptureExtension::class)
 class DynamoDbMusicRepositoryTest : AbstractTestcontainersIntegrationTest() {
+  private val music = Mocks.music()
+
   @Autowired
   private lateinit var dynamoDbMusicRepository: DynamoDbMusicRepository
-  private val music = Mocks.music()
 
   @BeforeEach
   fun setUp() {

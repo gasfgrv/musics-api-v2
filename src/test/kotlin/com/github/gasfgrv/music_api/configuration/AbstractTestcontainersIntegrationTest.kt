@@ -22,11 +22,17 @@ import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement
 import software.amazon.awssdk.services.dynamodb.model.KeyType.HASH
 import software.amazon.awssdk.services.dynamodb.model.KeyType.RANGE
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType.S
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient
+import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest
+import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretRequest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 abstract class AbstractTestcontainersIntegrationTest {
   @Autowired
   private lateinit var dynamoDbClient: DynamoDbClient
+
+  @Autowired
+  private lateinit var secretsManagerClient: SecretsManagerClient
 
   companion object Containter {
     @JvmStatic
@@ -77,11 +83,29 @@ abstract class AbstractTestcontainersIntegrationTest {
       .billingMode(PAY_PER_REQUEST)
       .build()
     dynamoDbClient.createTable(createTableRequest)
+    val createSecretSpotifyClientIdRequest = CreateSecretRequest.builder()
+      .name("spotify_client_id")
+      .secretString("gd2h8r2e882aj08oz56c9vkbpjdduutk")
+      .build()
+    secretsManagerClient.createSecret(createSecretSpotifyClientIdRequest)
+    val createSecretSpotifyClientSecretRequest = CreateSecretRequest.builder()
+      .name("spotify_client_secret")
+      .secretString("gd2h8r2e882aj08oz56c9vkbpjdduutk")
+      .build()
+    secretsManagerClient.createSecret(createSecretSpotifyClientSecretRequest)
   }
 
   @AfterEach
   fun afterEach() {
     val deleteTableRequest = DeleteTableRequest.builder().tableName("MusicsTb").build()
     dynamoDbClient.deleteTable(deleteTableRequest)
+    val deleteSecretSpotifyClientIdRequest = DeleteSecretRequest.builder()
+      .secretId("spotify_client_id")
+      .build()
+    secretsManagerClient.deleteSecret(deleteSecretSpotifyClientIdRequest)
+    val deleteSecretSpotifyClientSecretRequest = DeleteSecretRequest.builder()
+      .secretId("spotify_client_secret")
+      .build()
+    secretsManagerClient.deleteSecret(deleteSecretSpotifyClientSecretRequest)
   }
 }
