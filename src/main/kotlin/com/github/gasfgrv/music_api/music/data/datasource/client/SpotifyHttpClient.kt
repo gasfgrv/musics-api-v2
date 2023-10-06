@@ -6,7 +6,6 @@ import com.github.gasfgrv.music_api.music.data.datasource.client.feign.SpotifyFe
 import com.github.gasfgrv.music_api.music.data.datasource.mapper.MusicMapper
 import com.github.gasfgrv.music_api.music.data.model.dto.AccessTokenResponse
 import com.github.gasfgrv.music_api.music.data.model.dto.SpotifyResponse
-import com.github.gasfgrv.music_api.music.data.secrets.AwsSecretsManagerClient
 import com.github.gasfgrv.music_api.music.domain.client.SpotifyClient
 import com.github.gasfgrv.music_api.music.domain.entity.Music
 import com.jayway.jsonpath.JsonPath

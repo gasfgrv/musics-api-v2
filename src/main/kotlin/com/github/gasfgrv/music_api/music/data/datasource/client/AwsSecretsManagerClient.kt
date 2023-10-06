@@ -1,4 +1,4 @@
-package com.github.gasfgrv.music_api.music.data.secrets
+package com.github.gasfgrv.music_api.music.data.datasource.client
 
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient
