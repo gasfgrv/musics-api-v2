@@ -13,15 +13,18 @@ import java.time.LocalDate
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest
 
 @Component
 class SpotifyHttpClient(
   private val authSpotifyFeignClient: AuthSpotifyFeignClient,
   private val spotifyFeignClient: SpotifyFeignClient,
   private val musicMapper: MusicMapper,
-  private val awsSecretsManagerClient: AwsSecretsManagerClient
+  private val secretsManagerClient: SecretsManagerClient
 ) : SpotifyClient {
   private val logger = LoggerFactory.getLogger(SpotifyHttpClient::class.java)
+
   override fun getTrackInfo(music: Music): Music {
     val accessToken = getAccessTokenSpotify()
     val artistsName = Utils.joinToString(music.artists.map { it.name })
@@ -39,8 +42,8 @@ class SpotifyHttpClient(
   }
 
   private fun getAccessTokenSpotify(): AccessTokenResponse {
-    val clientId = awsSecretsManagerClient.getSecret("spotify_client_id")
-    val clientSecret = awsSecretsManagerClient.getSecret("spotify_client_secret")
+    val clientId = getSecret("spotify_client_id")
+    val clientSecret = getSecret("spotify_client_secret")
     val request = HashMap<String, String>()
     request["grant_type"] = "client_credentials"
     request["client_id"] = clientId!!
@@ -107,6 +110,11 @@ class SpotifyHttpClient(
 
   private fun <T> extractResponseAttribute(responseBody: String, jsonPathExpression: String): T {
     return JsonPath.parse(responseBody).read(jsonPathExpression)
+  }
+
+  private fun getSecret(secretName: String): String? {
+    val valueRequest = GetSecretValueRequest.builder().secretId(secretName).build()
+    return secretsManagerClient.getSecretValue(valueRequest).secretString()
   }
 
   private companion object Constants {
