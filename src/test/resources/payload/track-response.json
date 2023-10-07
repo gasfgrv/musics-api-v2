@@ -1,0 +1,87 @@
+{
+  "album": {
+    "album_type": "album",
+    "artists": [
+      {
+        "external_urls": {
+          "spotify": "https://open.spotify.com/artist/3gVC68xFogCXS5AeSBnLSP"
+        },
+        "href": "https://api.spotify.com/v1/artists/3gVC68xFogCXS5AeSBnLSP",
+        "id": "3gVC68xFogCXS5AeSBnLSP",
+        "name": "Retro Jungle",
+        "type": "artist",
+        "uri": "spotify:artist:3gVC68xFogCXS5AeSBnLSP"
+      }
+    ],
+    "external_urls": {
+      "spotify": "https://open.spotify.com/album/4TFZwv1D8oZV04OAMBewKc"
+    },
+    "href": "https://api.spotify.com/v1/albums/4TFZwv1D8oZV04OAMBewKc",
+    "id": "4TFZwv1D8oZV04OAMBewKc",
+    "images": [
+      {
+        "height": 640,
+        "url": "https://i.scdn.co/image/ab67616d0000b273c70ec669e44f753f9f067691",
+        "width": 640
+      },
+      {
+        "height": 300,
+        "url": "https://i.scdn.co/image/ab67616d00001e02c70ec669e44f753f9f067691",
+        "width": 300
+      },
+      {
+        "height": 64,
+        "url": "https://i.scdn.co/image/ab67616d00004851c70ec669e44f753f9f067691",
+        "width": 64
+      }
+    ],
+    "is_playable": true,
+    "name": "Summer Vibes",
+    "release_date": "2019-07-17",
+    "release_date_precision": "day",
+    "total_tracks": 11,
+    "type": "album",
+    "uri": "spotify:album:4TFZwv1D8oZV04OAMBewKc"
+  },
+  "artists": [
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3gVC68xFogCXS5AeSBnLSP"
+      },
+      "href": "https://api.spotify.com/v1/artists/3gVC68xFogCXS5AeSBnLSP",
+      "id": "3gVC68xFogCXS5AeSBnLSP",
+      "name": "Retro Jungle",
+      "type": "artist",
+      "uri": "spotify:artist:3gVC68xFogCXS5AeSBnLSP"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3l2xsQ69ajm8r7KZERjp6x"
+      },
+      "href": "https://api.spotify.com/v1/artists/3l2xsQ69ajm8r7KZERjp6x",
+      "id": "3l2xsQ69ajm8r7KZERjp6x",
+      "name": "Flandrs",
+      "type": "artist",
+      "uri": "spotify:artist:3l2xsQ69ajm8r7KZERjp6x"
+    }
+  ],
+  "disc_number": 1,
+  "duration_ms": 138000,
+  "explicit": false,
+  "external_ids": {
+    "isrc": "CH6541941297"
+  },
+  "external_urls": {
+    "spotify": "https://open.spotify.com/track/4DqekvGQW2zHNMVh0gM3qp"
+  },
+  "href": "https://api.spotify.com/v1/tracks/4DqekvGQW2zHNMVh0gM3qp",
+  "id": "4DqekvGQW2zHNMVh0gM3qp",
+  "is_local": false,
+  "is_playable": true,
+  "name": "Casio",
+  "popularity": 16,
+  "preview_url": "https://p.scdn.co/mp3-preview/5144b600dc54ff0fbe3e383e8bbfe70d4da9e8e0?cid=c7bfa947646644ff884f0cbad086f8e3",
+  "track_number": 2,
+  "type": "track",
+  "uri": "spotify:track:4DqekvGQW2zHNMVh0gM3qp"
+}
