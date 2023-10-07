@@ -1,11 +1,11 @@
 package com.github.gasfgrv.music_api.configuration
 
+import com.github.gasfgrv.music_api.utils.LocalstackUtils
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.springframework.beans.factory.annotation.Autowired
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.system.OutputCaptureExtension
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.localstack.LocalStackContainer
@@ -13,27 +13,10 @@ import org.testcontainers.containers.localstack.LocalStackContainer.Service.DYNA
 import org.testcontainers.containers.localstack.LocalStackContainer.Service.SECRETSMANAGER
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.utility.DockerImageName
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition
-import software.amazon.awssdk.services.dynamodb.model.BillingMode.PAY_PER_REQUEST
-import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest
-import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement
-import software.amazon.awssdk.services.dynamodb.model.KeyType.HASH
-import software.amazon.awssdk.services.dynamodb.model.KeyType.RANGE
-import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType.S
-import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient
-import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest
-import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretRequest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(OutputCaptureExtension::class)
 abstract class AbstractTestcontainersIntegrationTest {
-  @Autowired
-  private lateinit var dynamoDbClient: DynamoDbClient
-
-  @Autowired
-  private lateinit var secretsManagerClient: SecretsManagerClient
-
   companion object Containter {
     @JvmStatic
     @Container
@@ -51,61 +34,22 @@ abstract class AbstractTestcontainersIntegrationTest {
       registry.add("aws.signingRegion") { localStackContainer.region }
       registry.add("aws.accessKey") { localStackContainer.accessKey }
       registry.add("aws.secretKey") { localStackContainer.secretKey }
+      registry.add("spotify.authUrl") { "http://localhost:9561" }
+      registry.add("spotify.apiUrl") { "http://localhost:9561/v1" }
     }
 
     @JvmStatic
     @BeforeAll
-    internal fun beforeAll() {
+    fun beforeAll() {
       localStackContainer.start()
+      LocalstackUtils.deployServices(localStackContainer)
     }
 
     @JvmStatic
     @AfterAll
     fun afterAll() {
+      LocalstackUtils.destroyServices(localStackContainer)
       localStackContainer.stop()
     }
-  }
-
-  @BeforeEach
-  fun beforeEach() {
-    val keySchemaElements = mutableListOf(
-      KeySchemaElement.builder().attributeName("MusicId").keyType(HASH).build(),
-      KeySchemaElement.builder().attributeName("MusicName").keyType(RANGE).build()
-    )
-    val attributeDefinitions = mutableListOf(
-      AttributeDefinition.builder().attributeName("MusicId").attributeType(S).build(),
-      AttributeDefinition.builder().attributeName("MusicName").attributeType(S).build()
-    )
-    val createTableRequest = CreateTableRequest.builder()
-      .tableName("MusicsTb")
-      .keySchema(keySchemaElements)
-      .attributeDefinitions(attributeDefinitions)
-      .billingMode(PAY_PER_REQUEST)
-      .build()
-    dynamoDbClient.createTable(createTableRequest)
-    val createSecretSpotifyClientIdRequest = CreateSecretRequest.builder()
-      .name("spotify_client_id")
-      .secretString("gd2h8r2e882aj08oz56c9vkbpjdduutk")
-      .build()
-    secretsManagerClient.createSecret(createSecretSpotifyClientIdRequest)
-    val createSecretSpotifyClientSecretRequest = CreateSecretRequest.builder()
-      .name("spotify_client_secret")
-      .secretString("gd2h8r2e882aj08oz56c9vkbpjdduutk")
-      .build()
-    secretsManagerClient.createSecret(createSecretSpotifyClientSecretRequest)
-  }
-
-  @AfterEach
-  fun afterEach() {
-    val deleteTableRequest = DeleteTableRequest.builder().tableName("MusicsTb").build()
-    dynamoDbClient.deleteTable(deleteTableRequest)
-    val deleteSecretSpotifyClientIdRequest = DeleteSecretRequest.builder()
-      .secretId("spotify_client_id")
-      .build()
-    secretsManagerClient.deleteSecret(deleteSecretSpotifyClientIdRequest)
-    val deleteSecretSpotifyClientSecretRequest = DeleteSecretRequest.builder()
-      .secretId("spotify_client_secret")
-      .build()
-    secretsManagerClient.deleteSecret(deleteSecretSpotifyClientSecretRequest)
   }
 }
